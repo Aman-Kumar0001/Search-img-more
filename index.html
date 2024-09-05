@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <form id="search-form">
+        <input type="search" id="inputSearch" value="car">
+        <button id="search-btn">Search</button>
+    </form>
+    <div class="search-result"></div>
+    <button class="search-more-btn">Search more</button>
+
+    <script>
+        const accesskey = "Tc4pj0cPd88BhxpCHQvX7XJ8x4o5dSo0UcmMdhUQNfU";
+        const searchForm = document.getElementById('search-form');
+
+        const input = document.getElementById('inputSearch');
+
+        const searchResult = document.querySelector('.search-result');
+
+        const searchMore = document.querySelector('.search-more-btn');
+
+        let inputData = "";
+        let page = 1;
+
+        async function searchImage() {
+            inputData = input.value;
+
+            const url = `https://api.unsplash.com/search/photos?page=${page}&query=${inputData}&client_id=${accesskey}`;
+
+
+
+            const response = await fetch(url);
+            const data = await response.json();
+            const results = data.results;
+
+            if (page === 1) {
+                searchResult.innerHTML = "";
+            }
+
+            results.map(x => {
+                const imgElement = document.createElement('div');
+                imgElement.innerHTML = `
+                <div class="card">
+                    <img src="${x.urls.small}" alt="${x.alt_description}" width="300px" height="300px">
+                    <h2>${x.alt_description}</h2>
+                </div>
+                `;
+                searchResult.appendChild(imgElement);
+            });
+        }
+
+        searchForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            page = 1;
+            searchImage();
+        });
+
+        searchMore.addEventListener('click', function () {
+            page++;
+            searchImage();
+        });
+
+        window.onload = function(){
+            searchImage();
+        }
+    </script>
+</body>
+
+</html>
